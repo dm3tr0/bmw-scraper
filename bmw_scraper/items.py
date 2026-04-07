@@ -1,12 +1,17 @@
-# Define here the models for your scraped items
-#
-# See documentation in:
-# https://docs.scrapy.org/en/latest/topics/items.html
-
 import scrapy
 
-
-class BmwScraperItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+class BmwCarItem(scrapy.Item):
+    # Detail Page Header fields
+    model = scrapy.Field()
+    name = scrapy.Field()
+    
+    # Specification Section fields
+    mileage = scrapy.Field()
+    registered = scrapy.Field()
+    engine = scrapy.Field()
+    range = scrapy.Field() # electric only
+    exterior = scrapy.Field()
+    fuel = scrapy.Field()
+    transmission = scrapy.Field()
+    registration = scrapy.Field()
+    upholstery = scrapy.Field()
