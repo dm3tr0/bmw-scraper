@@ -46,6 +46,10 @@ class BmwSpider(scrapy.Spider):
                 meta={
                     "playwright": True,
                     "playwright_include_page": False,
+                    "playwright_page_methods": [
+                        # wait specifically for the spec data to render
+                        PageMethod("wait_for_selector", "div.uvl-c-specification-overview__value", timeout=20000) 
+                    ],
                     "car_item": car_item # pass the data we already collected
                 }
             )

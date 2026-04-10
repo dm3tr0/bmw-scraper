@@ -1,10 +1,8 @@
-import logging
 import sqlite3
+from scrapy.exceptions import DropItem
+
 
 class SQLitePipeline:
-    def __init__(self):
-        self.logger = logging.getLogger(__name__)
-
     def open_spider(self, spider):
         self.conn = sqlite3.connect('bmw_cars.db')
         self.curr = self.conn.cursor()
@@ -37,9 +35,35 @@ class SQLitePipeline:
             item.get('range'), item.get('exterior'), item.get('fuel'),
             item.get('transmission'), item.get('upholstery'),
         ))
-        self.conn.commit()
-        self.logger.info(f"Saved car {item.get('registration')} - {item.get('name')}")
+        
+        # checks if car exist in db
+        if self.curr.rowcount == 0:
+            spider.logger.info(f"Duplicate skipped: {item.get('registration')} already in database.")
+        else:
+            self.conn.commit()
+            spider.logger.info(f"Saved new car: {item.get('registration')} - {item.get('name')}")
         return item
 
     def close_spider(self, spider):
         self.conn.close()
+
+
+class DataCleaningPipeline:
+    def process_item(self, item, spider):
+        required_fields = ['model', 'name', 'registration']
+        for field in required_fields:
+            if not item.get(field):
+                spider.logger.warning(f"Dropped item due to missing {field}: {item.get('link')}")
+                raise DropItem(f"Missing required field: {field}")
+
+        if item.get('mileage'):
+            try:
+                clean_mileage = str(item['mileage']).replace(',', '')
+                item['mileage'] = int(clean_mileage)
+            except ValueError:
+                item['mileage'] = None 
+
+        if item.get('fuel'):
+            item['fuel'] = str(item['fuel']).lower()
+
+        return item
