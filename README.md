@@ -1,5 +1,6 @@
 # Installation & Setup
-# Video project demo - https://www.loom.com/share/6a048dc7d5bf47ae878720000b701a3a
+### Video project demo 
+https://www.loom.com/share/6a048dc7d5bf47ae878720000b701a3a
 
 1. **Clone the repository**
    ```bash
